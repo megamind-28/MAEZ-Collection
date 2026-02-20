@@ -90,7 +90,57 @@ document.addEventListener('DOMContentLoaded', () => {
   initContactForm();
   initSquarePayment();
   updateBookingSummary();
+  initTypewriter();
 });
+
+/* =============================================================
+   TYPEWRITER HERO
+============================================================= */
+function initTypewriter() {
+  const el = document.getElementById('typewriter-text');
+  if (!el) return;
+
+  const phrases  = [
+    'I need a short term rental',
+    'I need a place to stay',
+    'I need a long term rental',
+  ];
+  const TYPE_SPEED   = 70;   // ms per character typed
+  const DELETE_SPEED = 40;   // ms per character deleted
+  const PAUSE_AFTER  = 2000; // ms to pause once fully typed
+  const PAUSE_BEFORE = 400;  // ms to pause before typing next phrase
+
+  let phraseIdx = 0;
+  let charIdx   = 0;
+  let deleting  = false;
+
+  function tick() {
+    const current = phrases[phraseIdx];
+
+    if (!deleting) {
+      el.textContent = current.slice(0, charIdx + 1);
+      charIdx++;
+      if (charIdx === current.length) {
+        deleting = true;
+        setTimeout(tick, PAUSE_AFTER);
+        return;
+      }
+      setTimeout(tick, TYPE_SPEED);
+    } else {
+      el.textContent = current.slice(0, charIdx - 1);
+      charIdx--;
+      if (charIdx === 0) {
+        deleting  = false;
+        phraseIdx = (phraseIdx + 1) % phrases.length;
+        setTimeout(tick, PAUSE_BEFORE);
+        return;
+      }
+      setTimeout(tick, DELETE_SPEED);
+    }
+  }
+
+  tick();
+}
 
 /* =============================================================
    NAVIGATION
